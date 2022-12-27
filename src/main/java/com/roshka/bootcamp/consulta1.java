@@ -38,8 +38,10 @@ public class consulta1 extends HttpServlet {
                             " GROUP BY (cliente.nombre) \n" +
                             " ORDER BY (gasto) DESC;");
             out.println("<html>");
+            out.print(" <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"\n" +
+                    "        integrity=\"sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65\" crossorigin=\"anonymous\">");
             out.println("<body>");
-            out.println("<h2>TOP CLIENTES QUE MAS GASTARON</h2>");
+            out.println("<div class='h3 text-primary'>TOP CLIENTES QUE MAS GASTARON</div>");
             out.println("<a href='./index.jsp'>VOLVER AL MENU</a>");
             while (rs.next()) {
                 String nombre = rs.getString("nombre");

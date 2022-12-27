@@ -36,7 +36,10 @@ public class consulta3 extends HttpServlet {
                             "GROUP BY (producto.nombre)\n" +
                             "ORDER BY (cantidad) DESC;\n");
             out.println("<html>");
+            out.print(" <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"\n" +
+                    "        integrity=\"sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65\" crossorigin=\"anonymous\">");
             out.println("<body>");
+            out.println("<div class='h3 text-primary'>PRODUCTOS MAS VENDIDOS</div>");
             out.println("<h2>PRODUCTOS MAS VENDIDOS</h2>");
             out.println("<a href='./index.jsp'>VOLVER AL MENU</a>");
             while (rs.next()) {
