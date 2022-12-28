@@ -4,51 +4,57 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.PrintWriter;
 import java.sql.*;
 
 @WebServlet("/consulta2")
 public class consulta2 extends HttpServlet {
-    Connection connection;
     public void init() {
         try {
-            Class.forName("org.postgresql.Driver");
-            connection = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/bootcamp_market",
-                            "postgres", "postgres");
+            DBManagment.initializeDatabase();
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);
         }
     }
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse res) {
+
         try {
-            Statement stmt = connection.createStatement();
+            Statement stmt = DBManagment.con.createStatement();
             res.setContentType("text/html");
             PrintWriter out = res.getWriter();
-            ResultSet rs = stmt
-                    .executeQuery("SELECT moneda.nombre, count(moneda.nombre) cantidad_de_facturas \n" +
-                            "FROM moneda INNER JOIN factura ON moneda.id=factura.moneda_id\n" +
-                            "GROUP BY (moneda.nombre)\n" +
-                            "ORDER BY (cantidad_de_facturas) DESC;\n");
             out.println("<html>");
             out.print(" <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"\n" +
                     "        integrity=\"sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65\" crossorigin=\"anonymous\">");
             out.println("<body>");
-            out.println("<div class='h3 text-primary'>TOP MONEDAS MAS UTILIZADAS</div>");
-            out.println("<a href='./index.jsp'>VOLVER AL MENU</a>");
+            out.println("<div class='container'>");
+            out.println("<a href='./index.jsp' class='h2 text-primary'>VOLVER AL MENU</a>");
+            out.println("<div class='row'>");
+            ResultSet rs = stmt
+                    .executeQuery(
+                            " SELECT cliente.nombre, cliente.apellido, cliente.nro_cedula, cliente.telefono\n" +
+                                    " FROM cliente;");
+
+            out.println("<div class='h3 text-primary col-md-12 col-sm-12'>DATOS DEL CLIENTE</div>");
+            out.println("<div class='col-md-3 col-sm-12 text-primary'>NOMBRE</div>");
+            out.println("<div class='col-md-3 col-sm-12 text-primary'>APELLIDO</div>");
+            out.println("<div class='col-md-3 col-sm-12 text-primary'>CEDULA</div>");
+            out.println("<div class='col-md-3 col-sm-12 text-primary'>TELEFONO</div>");
             while (rs.next()) {
-                String moneda_nombre = rs.getString("nombre");
-                int cantidad = rs.getInt("cantidad_de_facturas");
-
-                out.println("<p>NOMBRE = " + moneda_nombre + "</p>");
-                out.println("<p>CANTIDAD DE APARICIONES = " + cantidad + "</p>");
-
+                String nombre = rs.getString("nombre");
+                String apellido = rs.getString("apellido");
+                String nro_cedula = rs.getString("nro_cedula");
+                String telefono = rs.getString("telefono");
+                out.println("<div class='col-md-3 col-sm-12'>"+nombre+"</div>");
+                out.println("<div class='col-md-3 col-sm-12'>"+apellido+"</div>");
+                out.println("<div class='col-md-3 col-sm-12'>"+nro_cedula+"</div>");
+                out.println("<div class='col-md-3 col-sm-12'>"+telefono+"</div>");
             }
+            out.println("</div>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
             rs.close();
@@ -59,10 +65,9 @@ public class consulta2 extends HttpServlet {
 
     }
 
-
     public void destroy() {
         try {
-            connection.close();
+            DBManagment.con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }

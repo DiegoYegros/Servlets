@@ -31,25 +31,32 @@ public class consulta1 extends HttpServlet {
             res.setContentType("text/html");
             PrintWriter out = res.getWriter();
             ResultSet rs = stmt
-                    .executeQuery(" SELECT cliente.nombre, SUM(ROUND(producto.precio*factura_detalle.cantidad)) gasto\n" +
-                            " FROM cliente INNER JOIN factura ON cliente.id=factura.cliente_id\n" +
-                            " INNER JOIN factura_detalle ON factura.id = factura_detalle.factura_id\n" +
-                            " INNER JOIN producto ON producto.id= factura_detalle.producto_id\n" +
-                            " GROUP BY (cliente.nombre) \n" +
-                            " ORDER BY (gasto) DESC;");
+                    .executeQuery("SELECT moneda.nombre, count(moneda.nombre) cantidad_de_monedas \n" +
+                            "FROM moneda " +
+                            "GROUP BY (moneda.nombre)\n" +
+                            "ORDER BY (cantidad_de_monedas) DESC;\n");
+
             out.println("<html>");
             out.print(" <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\"\n" +
                     "        integrity=\"sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65\" crossorigin=\"anonymous\">");
             out.println("<body>");
-            out.println("<div class='h3 text-primary'>TOP CLIENTES QUE MAS GASTARON</div>");
+            out.println("<div class='container'>");
             out.println("<a href='./index.jsp'>VOLVER AL MENU</a>");
+            out.println("<div class='row'>");
+            out.println("<div class='h3 text-primary col-md-12 col-sm-12'>MONEDAS</div>");
+            out.println("<div class='col-md-6 col-sm-12 text-primary'>NOMBRE</div>");
+            out.println("<div class='col-md-6 col-sm-12 text-primary'>CANTIDAD DE APARICIONES</div>");
+            out.println("</div>");
             while (rs.next()) {
-                String nombre = rs.getString("nombre");
-                int cantidad = rs.getInt("gasto");
-                out.println("<p>NOMBRE = \\" + nombre + "</p>");
-                out.println("<p>CANTIDAD FACTURA = \\" + cantidad + "</p>");
-
+                String moneda_nombre = rs.getString("nombre");
+                int cantidad = rs.getInt("cantidad_de_monedas");
+                out.println("<div class='row'>");
+                out.println("<div class='col-md-6 col-sm-12'>"+moneda_nombre+"</div>");
+                out.println("<div class='col-md-6 col-sm-12'>"+cantidad+"</div>");
+                out.println("</div>");
             }
+            out.println("</div>");
+            out.println("</div>");
             out.println("</body>");
             out.println("</html>");
             rs.close();
